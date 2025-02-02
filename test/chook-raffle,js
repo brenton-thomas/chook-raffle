@@ -1,0 +1,98 @@
+const {expect}  = require("chai");
+const {hre} = require("hardhat");
+const { loadFixture } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
+  
+
+const DEBUG_TRACE=true;
+
+function debug_location(location){
+    //convenience function to help know where I am 
+    const dashes = "----------"
+    if(DEBUG_TRACE){
+        console.log("\n",dashes,location,dashes,"\n")
+    } 
+}
+
+function debug_trace(...args){
+    //convenience function to help know where I am 
+    if(DEBUG_TRACE){
+        console.log("DEBUG_TRACE",...args)
+    } 
+}
+
+describe("TEST>> Chook Raffle", function () {
+
+    async function deployInitialTestFixture(){
+        debug_location("deployInitialTestFixture");
+        
+        // Contracts are deployed using the first signer/account by default
+        const [owner, otherAccount] = await ethers.getSigners();
+
+        const Raffle = await ethers.getContractFactory("ChookRaffle");
+        const raffle = await Raffle.deploy();
+
+        return { raffle, owner, otherAccount };
+    }
+
+
+    describe("TEST>> Deployment", function () {
+        debug_location("Deployment");
+
+        it("the token owner should exist as the owner assigned", async function () {
+
+            //shouldn't get messed up along the way.....
+            const { raffle, owner } = await loadFixture(deployInitialTestFixture);
+            const [tst_owner] = await ethers.getSigners();
+
+            expect(tst_owner.address).to.equal(owner.address);
+
+            debug_trace("Deployment: tst_owner.address", tst_owner.address )
+            debug_trace("Deployment: owner.address", owner.address );
+        })
+
+        it("the correct initial value should be assigned", async function () {
+
+            //care here the number of tokens is in GWEI_MULT units
+            const { raffle, owner } = await loadFixture(deployInitialTestFixture);
+            const ownerBalance = await raffle.balanceOf(owner.address);
+
+            x=await raffle.totalSupply();
+            expect(x).to.equal(ownerBalance);
+      
+            debug_trace("Deployment: owner.address", owner.address);
+            debug_trace("Deployment: raffle.totalSupply()", x); 
+            debug_trace("Deployment: ownerBalance", ownerBalance);
+        })
+
+        it("its name should be ChookRaffle", async function () {
+
+            const { raffle, owner } = await loadFixture(deployInitialTestFixture);
+            
+            x=await raffle.name();
+            expect(x).to.equal("ChookRaffle");
+      
+            debug_trace("Deployment: raffle.name()", x );
+        })
+
+        it("its symbol should be CHOOK", async function () {
+
+            const { raffle, owner } = await loadFixture(deployInitialTestFixture);
+            
+            x=await warchest.symbol();
+            expect(x).to.equal("CHOOK");
+      
+            debug_trace("Deployment: raffle.symbol()", x);
+        })
+
+        it("its decimals should be 18", async function () {
+
+            //care here the number of tokens is in GWEI_MULT units
+            const { raffle, owner } = await loadFixture(deployInitialTestFixture);
+            
+            x=await raffle.decimals();
+            expect(x).to.equal(18);
+      
+            debug_trace("Deployment: raffle.decimals()", x );
+        })
+    })    
+})
