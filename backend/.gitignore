@@ -1,0 +1,8 @@
+node_modules
+
+#username and password for the database, don't want this on git
+#see the connection.json.template file for the format
+connection.json
+
+#initial test data, also dont want this on git
+data_setup.sql

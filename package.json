@@ -13,6 +13,9 @@
     "hardhat": "^2.22.18"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^5.2.0"
+    "@openzeppelin/contracts": "^5.2.0",
+    "cron": "^3.5.0",
+    "express": "^4.21.2",
+    "mysql": "^2.18.1"
   }
 }
