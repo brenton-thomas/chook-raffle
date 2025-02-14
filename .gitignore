@@ -20,6 +20,7 @@ ignition/deployments/chain-31337
 #development notes
 notes/
 
+_attic/
 
 #username and password for the database, don't want this on git
 #see the connection.json.template file for the format

@@ -6,3 +6,5 @@ connection.json
 
 #initial test data, also dont want this on git
 data_setup.sql
+
+_attic/

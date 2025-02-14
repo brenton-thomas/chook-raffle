@@ -1,45 +1,55 @@
-
 const fs = require('fs');
 
-var bt=bt||{};
-bt.util=bt.util||{};
 
-bt.util.db_user=function(){
+function db_user(){
 
-    var obj;
-    return fs.readFileSync('connection.json', 'utf8', function (err, data) {
-      if (err) throw err;
-      obj = JSON.parse(data);
+    return new Promise((resolve,reject)=>{
+
+        fs.readFile('./connection.json', { encoding: 'utf8', flag: 'r' },(err, data) => {
+            if (err) {
+                reject(err);
+            }
+            resolve(JSON.parse(data));        
+          });
     });
-}
+} 
 
-const mysql = require('mysql');
-
-bt.util.db_pool = function(){
- 
-    const user=db_user();
-    return mysql.createPool({
-        connectionLimit : 10,
+function db_connection(user){
+    
+    return  mysql.createConnection({
         host: 'localhost',
         user: user.user,
-        password: user.pw,
+        password: user.password,
         database: 'chook_raffle'
+    });
+}     
+    
+function db_query(conn,qstr){
+    
+    return new Promise((resolve,reject)=>{
+        conn.query( qstr, ( err, rows ) => {
+            if (err) {
+                reject(err);
+            }          
+            resolve(rows); 
+        }); 
+        conn.end();
     });
 }
 
 
-bt.util.query = function(qstr){
+const mysql = require('mysql2');
 
-  return new Promise((resolve, reject)=>{
-      pool.query(qstr, (error, elements)=>{
-          if(error){
-              return reject(error);
-          }
-          return resolve(elements);
-      });
-  });
+async function bt_query(qstr){
+
+    var dbu = await db_user();
+    var dbc = await db_connection(dbu);
+    var dbq = await db_query(dbc,qstr);
+
+    return dbq;
 }
 
 
-
-
+module.exports = {
+    bt_query: bt_query
+  };
